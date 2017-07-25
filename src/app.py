@@ -15,9 +15,12 @@ def home():
     # return 'Rebellama'
 
 @app.route('/createGroupTrip', methods=['POST'])
-def createGroupTrip(trip_title, emails):
-    # store data into db here
-    # send emails
+def createGroupTrip(organizer_id, trip_title, email_addresses, message, **kwargs):
+    if message:
+        kwargs.update(message)
+    db.create_group_trip(organizer_id, trip_title, kwargs)
+    for email_address in email_addresses:
+        emails.send_email(email_address, message)
     return 'Rebellama'
 
 @app.route('/getVotingPage', methods=['GET'])

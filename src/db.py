@@ -33,9 +33,8 @@ class TripDB(object):
 
     def insert(self, query):
         conn = self.get_conn()
-
-
-
+        conn.execute(query)
+        conn.close()
 
     def store_vote_result(self, email, location, start_date, end_date, price_min, price_max, has_car=None, has_cleaning=None,
                           has_fitness=None, has_wifi=None, has_attractions=None, has_restaurant=None, has_spa=None, has_pool=None,
@@ -43,13 +42,36 @@ class TripDB(object):
         # query = 
         pass
 
+    def create_group_trip(self, organizer_id, trip_title, **kwargs):
+        query = "INSERT INTO trip (user_id, trip_title,".format(organizer_id)
+        values = ' VALUES ({}, "{}",'.format(organizer_id, trip_title)
+
+        for k, v in kwargs.iteritems():
+            query += ' {},'.format(k)
+            if type(v) is str:
+                values += ' "{}",'.format(v)
+            else:
+                values += ' {},'.format(v)
+        query = query[:-1]
+        values = values[:-1]
+        query += ')'
+        values += ')'
+        query += values
+
+        self.insert(query)
+        return True
 
 
 if __name__ == "__main__":
     trip_db = TripDB()
-    conn = trip_db.get_conn()
-    conn.execute("INSERT INTO trip (user_id) VALUES (5)")
-    conn.close()
+    params = {'location': 123, 'min_price': 300, 'max_price': 600, 'message': 'come with me'}
+    print params.keys()
+    print params.values()
+    trip_db.create_group_trip(6, 'my cool trip', **params)
+    # conn = trip_db.get_conn()
+    # conn.execute("INSERT INTO trip (user_id) VALUES (5)")
+    # conn.close()
+
 
 
 

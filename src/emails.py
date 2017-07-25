@@ -1,4 +1,4 @@
 # email related methods here
 
-def send_vote_results():
+def send_email(email_address, message):
 	pass
