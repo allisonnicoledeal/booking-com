@@ -31,10 +31,12 @@ class TripDB(object):
         return result
 
 
-    def insert(self, query):
+    def insert(self, query, return_id=False):
+        # TODO: unsafe insert queries, fix this
         conn = self.get_conn()
-        conn.execute(query)
+        res = conn.execute(query)
         conn.close()
+        return res.lastrowid
 
     def store_vote_result(self, email, location, start_date, end_date, price_min, price_max, has_car=None, has_cleaning=None,
                           has_fitness=None, has_wifi=None, has_attractions=None, has_restaurant=None, has_spa=None, has_pool=None,
@@ -42,32 +44,42 @@ class TripDB(object):
         # query = 
         pass
 
-    def create_group_trip(self, organizer_id, trip_title, **kwargs):
-        query = "INSERT INTO trip (user_id, trip_title,".format(organizer_id)
+
+    def create_group_trip(self, organizer_id, trip_title, location_ids, **kwargs):
+        trip_query = "INSERT INTO trip (user_id, trip_title,".format(organizer_id)
         values = ' VALUES ({}, "{}",'.format(organizer_id, trip_title)
 
         for k, v in kwargs.iteritems():
-            query += ' {},'.format(k)
+            trip_query += ' {},'.format(k)
             if type(v) is str:
                 values += ' "{}",'.format(v)
             else:
                 values += ' {},'.format(v)
-        query = query[:-1]
+        trip_query = trip_query[:-1]
         values = values[:-1]
-        query += ')'
+        trip_query += ')'
         values += ')'
-        query += values
+        trip_query += values
+        trip_id = self.insert(trip_query, return_id=True)
 
-        self.insert(query)
+        for location_id in location_ids:
+            location_query = "INSERT INTO trip_locations (trip_id, booking_city_id) VALUES ({}, {})".format(trip_id, location_id)
+            self.insert(location_query)
+
         return True
+
+    def get_trip_info(self, trip_id):
+        query = "SELECT * FROM trip WHERE id = {}".format(trip_id)
+        return self.fetchone(query)
 
 
 if __name__ == "__main__":
     trip_db = TripDB()
-    params = {'location': 123, 'min_price': 300, 'max_price': 600, 'message': 'come with me'}
+    params = {'min_price': 300, 'max_price': 600, 'message': 'come with me'}
     print params.keys()
     print params.values()
-    trip_db.create_group_trip(6, 'my cool trip', **params)
+    location_ids = [17, 19]
+    trip_db.create_group_trip(6, 'my cool trip', location_ids, **params)
     # conn = trip_db.get_conn()
     # conn.execute("INSERT INTO trip (user_id) VALUES (5)")
     # conn.close()
