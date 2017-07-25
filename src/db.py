@@ -38,15 +38,32 @@ class TripDB(object):
         conn.close()
         return res.lastrowid
 
-    def store_vote_result(self, email, location, start_date, end_date, price_min, price_max, has_car=None, has_cleaning=None,
-                          has_fitness=None, has_wifi=None, has_attractions=None, has_restaurant=None, has_spa=None, has_pool=None,
-                          has_view=None, is_hotel=None, is_bnb=None, is_villa=None, is_apt=None, is_campsite=None, is_resort=None):
-        # query = 
-        pass
+    def create_vote_result(self, trip_id, **kwargs):
+        vote_query = "INSERT INTO trip_votes (trip_id,"
+        values = ' VALUES ({},'.format(trip_id)
 
+        for k, v in kwargs.iteritems():
+            vote_query += ' {},'.format(k)
+            if type(v) is str:
+                values += ' "{}",'.format(v)
+            else:
+                values += ' {},'.format(v)
+        vote_query = vote_query[:-1]
+        values = values[:-1]
+        vote_query += ')'
+        values += ')'
+        vote_query += values
+        self.insert(vote_query, return_id=True)
 
-    def create_group_trip(self, organizer_id, trip_title, location_ids, **kwargs):
-        trip_query = "INSERT INTO trip (user_id, trip_title,".format(organizer_id)
+    def create_group_trip(self, organizer_id, trip_title, location_ids, date_ranges, **kwargs):
+        """
+        :type organizer_id: int, booking.com user id of organizer_id
+        :type trip_title: str
+        :type location_ids: list[(dest_id, dest_type)]
+        :type date_ranges: list[(min datetime, max datetime)]
+        """
+
+        trip_query = "INSERT INTO trip (user_id, trip_title,"
         values = ' VALUES ({}, "{}",'.format(organizer_id, trip_title)
 
         for k, v in kwargs.iteritems():
@@ -62,15 +79,35 @@ class TripDB(object):
         trip_query += values
         trip_id = self.insert(trip_query, return_id=True)
 
-        for location_id in location_ids:
-            location_query = "INSERT INTO trip_locations (trip_id, booking_city_id) VALUES ({}, {})".format(trip_id, location_id)
+        for dest_id, dest_type in location_ids:
+            location_query = "INSERT INTO trip_locations (trip_id, dest_id, dest_type) VALUES ({}, {})".format(trip_id, dest_id, dest_type)
             self.insert(location_query)
+
+        for start_date, end_date in date_ranges:
+            dates_query = 'INSERT INTO trip_dates (trip_id, start_date, end_date) VALUES ({}, "{}", "{}")'.format(trip_id, start_date, end_date)
+            self.insert(dates_query)
 
         return True
 
     def get_trip_info(self, trip_id):
         query = "SELECT * FROM trip WHERE id = {}".format(trip_id)
         return self.fetchone(query)
+
+    def get_trip_votes(self, trip_id):
+        query = """
+            SELECT  trip_votes.has_beach, trip_votes.has_car, trip_votes.has_cleaning, trip_votes.has_fitness,
+              trip_votes.has_wifi, trip_votes.has_attractions, trip_votes.has_restaurant, trip_votes.has_spa,
+              trip_votes.has_pool, trip_votes.has_view, trip_votes.is_hotel, trip_votes.is_bnb, trip_votes.is_villa,
+              trip_votes.is_apt, trip_votes.is_campsite, trip_votes.is_resort, trip_votes.min_budget, trip_votes.max_budget,
+              trip_locations.dest_id, trip_locations.dest_type, trip_dates.start_date, trip_dates.end_date
+            FROM trip_votes
+            JOIN trip_locations ON trip_votes.trip_id = trip_locations.trip_id
+            JOIN trip_dates ON trip_votes.trip_id = trip_dates.trip_id
+            WHERE trip_votes.trip_id = {}
+            AND trip_votes.trip_dates_id = trip_dates.id
+            AND trip_votes.trip_location_id = trip_locations.id
+        """.format(trip_id)
+        return self.fetchall(query)
 
 
 if __name__ == "__main__":
