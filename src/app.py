@@ -2,7 +2,7 @@ from flask import Flask
 
 import calc
 import db
-import email
+import emails
 
 app = Flask(__name__)
 
@@ -41,7 +41,7 @@ def getBestHotels(trip_id, limit):
     # calculate best pct and find best hotels, store to db
     calc.get_best_hotels(trip_id, limit)
     # notify organizer
-    email.send_vote_results()
+    emails.send_vote_results()
     return 'Rebellama'
 
 @app.route('/bookRoom', methods=['POST'])

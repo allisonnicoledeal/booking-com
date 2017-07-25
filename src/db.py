@@ -2,18 +2,18 @@
 import sqlalchemy
 # import MySQLdb
 
-from cfg import DB_STR
+from cfg import DB_STRING
 
 
 # db = sqlalchemy.create_engine(cfg.DB_STR, pool_recycle=600, pool_size=16)
 class TripDB(object):
 
-	def __init__(self):
-		# self.conn = self.get_conn(DB['host'], user=DB['user'], passwd=DB['pw'], db=DB['database'])
-		self.db_pool = sqlalchemy.create_engine(DB_STR)
+    def __init__(self):
+        # self.conn = self.get_conn(DB['host'], user=DB['user'], passwd=DB['pw'], db=DB['database'])
+        self.db_pool = sqlalchemy.create_engine(DB_STRING)
 
-	def get_conn(self):
-		self.db_pool.connect()
+    def get_conn(self):
+        self.db_pool.connect()
 
     def fetchall(self, query):
         conn = self.get_conn()
@@ -39,10 +39,11 @@ class TripDB(object):
     def store_vote_result(self, email, location, start_date, end_date, price_min, price_max, has_car=None, has_cleaning=None,
                           has_fitness=None, has_wifi=None, has_attractions=None, has_restaurant=None, has_spa=None, has_pool=None,
                           has_view=None, is_hotel=None, is_bnb=None, is_villa=None, is_apt=None, is_campsite=None, is_resort=None):
-    	query = 
+        # query = 
+        pass
 
 
 
 if __name__ == "__main__":
-	trip_db = TripDB()
+    trip_db = TripDB()
 
