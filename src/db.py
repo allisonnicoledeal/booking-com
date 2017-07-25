@@ -13,7 +13,7 @@ class TripDB(object):
         self.db_pool = sqlalchemy.create_engine(DB_STRING)
 
     def get_conn(self):
-        self.db_pool.connect()
+        return self.db_pool.connect()
 
     def fetchall(self, query):
         conn = self.get_conn()
@@ -36,6 +36,7 @@ class TripDB(object):
 
 
 
+
     def store_vote_result(self, email, location, start_date, end_date, price_min, price_max, has_car=None, has_cleaning=None,
                           has_fitness=None, has_wifi=None, has_attractions=None, has_restaurant=None, has_spa=None, has_pool=None,
                           has_view=None, is_hotel=None, is_bnb=None, is_villa=None, is_apt=None, is_campsite=None, is_resort=None):
@@ -46,4 +47,9 @@ class TripDB(object):
 
 if __name__ == "__main__":
     trip_db = TripDB()
+    conn = trip_db.get_conn()
+    conn.execute("INSERT INTO trip (user_id) VALUES (5)")
+    conn.close()
+
+
 
