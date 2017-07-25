@@ -35,7 +35,7 @@ def submitVote(email, location, start_date, end_date, price_min, price_max, has_
     db.store_vote_result(email, location, start_date, end_date, price_min, price_max, has_car=None, has_cleaning=None,
                          has_fitness=None, has_wifi=None, has_attractions=None, has_restaurant=None, has_spa=None, has_pool=None,
                          has_view=None, is_hotel=None, is_bnb=None, is_villa=None, is_apt=None, is_campsite=None, is_resort=None)
-    return 'Rebellama'
+    return db.execute("INSERT INTO trip_details ( email,location, start_date, end_date, price_min,price_max,has_car, has_cleaning,has_fitness,has_wifi, has_attractions, has_restaurant, has_spa, has_pool, has_view, is_hotel,is_bnb,is_villa, is_apt, is_campsite, is_resort ) VALUES (email,location, start_date, end_date, price_min,price_max,has_car, has_cleaning,has_fitness,has_wifi, has_attractions, has_restaurant, has_spa, has_pool, has_view, is_hotel,is_bnb,is_villa, is_apt, is_campsite, is_resort ) ");
 
 # this will be called by a cron job
 # cron job will scan db for voting complete, but stats missing
