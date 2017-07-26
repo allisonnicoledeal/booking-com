@@ -98,8 +98,8 @@ class TripDB(object):
             SELECT  trip_votes.has_beach, trip_votes.has_car, trip_votes.has_cleaning, trip_votes.has_fitness,
               trip_votes.has_wifi, trip_votes.has_attractions, trip_votes.has_restaurant, trip_votes.has_spa,
               trip_votes.has_pool, trip_votes.has_view, trip_votes.is_hotel, trip_votes.is_bnb, trip_votes.is_villa,
-              trip_votes.is_apt, trip_votes.is_campsite, trip_votes.is_resort, trip_votes.min_budget, trip_votes.max_budget,
-              trip_locations.dest_id, trip_locations.dest_type, trip_dates.start_date, trip_dates.end_date
+              trip_votes.is_apt, trip_votes.is_campsite, trip_votes.is_resort, trip_votes.solo_room, trip_votes.min_budget,
+              trip_votes.max_budget, trip_locations.dest_id, trip_locations.dest_type, trip_dates.start_date, trip_dates.end_date
             FROM trip_votes
             JOIN trip_locations ON trip_votes.trip_id = trip_locations.trip_id
             JOIN trip_dates ON trip_votes.trip_id = trip_dates.trip_id
