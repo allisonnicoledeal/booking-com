@@ -1,15 +1,12 @@
 #db methods here
 import sqlalchemy
-# import MySQLdb
 
 from cfg import DB_STRING
 
 
-# db = sqlalchemy.create_engine(cfg.DB_STR, pool_recycle=600, pool_size=16)
 class TripDB(object):
 
     def __init__(self):
-        # self.conn = self.get_conn(DB['host'], user=DB['user'], passwd=DB['pw'], db=DB['database'])
         self.db_pool = sqlalchemy.create_engine(DB_STRING)
 
     def get_conn(self):
@@ -31,10 +28,10 @@ class TripDB(object):
         return result
 
 
-    def insert(self, query, return_id=False):
+    def insert(self, query, values):
         # TODO: unsafe insert queries, fix this
         conn = self.get_conn()
-        res = conn.execute(query)
+        res = conn.execute(query, values)
         conn.close()
         return res.lastrowid
 
