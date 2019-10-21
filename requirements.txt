@@ -7,7 +7,7 @@ Mako==1.0.7
 MarkupSafe==1.0
 MySQL-python==1.2.5
 SQLAlchemy==1.1.12
-Werkzeug==0.12.2
+Werkzeug==0.15.3
 alembic==0.9.3
 certifi==2017.4.17
 chardet==3.0.4
